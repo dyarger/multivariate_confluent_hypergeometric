@@ -52,8 +52,8 @@ df <- data.frame(x = grid_info$x_vals,
                  nu = rep(c(3, 2, 1, 10), each = length(grid_info$x_vals)))
 ggplot(data = dplyr::filter(df, abs(x) < 5), aes(x = x, y = value, color = factor(nu), linetype = factor(nu))) + 
   geom_line(size = .65) + 
-  labs(x = 'Lags', y = 'Cross-covariance\nfunction', color = expression(alpha),
-       linetype = expression(alpha))
+  labs(x = 'Lags', y = 'Cross-covariance\nfunction', color = expression(alpha*'*'),
+       linetype = expression(alpha*'*'))
 ggsave('images/example_combination_function_varying_alpha.png', height = 3, width = 6)
 
 cov_val_lag <- fft_1d(grid_info, nu1 = .2, nu2 = .2, alpha1 = 1, alpha2 = 1, beta1 = 1, beta2 = 1, re = 0, im = 1)[,2]
@@ -66,6 +66,6 @@ df <- data.frame(x = grid_info$x_vals,
                  nu = rep(c(.2, .5, 1, 2), each = length(grid_info$x_vals)))
 ggplot(data = dplyr::filter(df, abs(x) < 5), aes(x = x, y = value, color = factor(nu), linetype = factor(nu))) + 
   geom_line(size = .65) + 
-  labs(x = 'Lags', y = 'Cross-covariance\nfunction', color = expression(nu),
-       linetype = expression(nu))
+  labs(x = 'Lags', y = 'Cross-covariance\nfunction', color = expression(nu*'*'),
+       linetype = expression(nu*'*'))
 ggsave('images/example_combination_function_varying_nu.png', height = 3, width = 6)

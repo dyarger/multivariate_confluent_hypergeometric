@@ -206,6 +206,61 @@ ll_ch <- function(par0, dist11, dist12,dist22, response, d = 2) {
   - ll_val
 }
 
+#' Confluent Hypergeometric likelihood with p = 2
+#'
+#' @param par0 model parameters
+#' @param dist11 square matrix of distances for locations observed for first process
+#' @param dist12 matrix of distances between locations observed for first and second processes
+#' @param dist22 square matrix distances for locations observed for second process
+#' @param response a vector of data of length nrow(dist11) + nrow(dist22), with values for process 1 presented first
+#' @param d dimension
+#'
+#' @return a value (up to a constant) proportional to the multivariate Gaussian log-likelihood based on the covariances
+#' @export
+#'
+#' @examples
+ll_ch_full <- function(par0, dist11, dist12,dist22, response, d = 2) {
+  nu1 <- exp(par0[1])
+  nu2 <- exp(par0[2])
+  nu12 <- exp(par0[3])
+  alpha1 <- exp(par0[4])
+  alpha2 <- exp(par0[5])
+  alpha12 <- exp(par0[6])
+  beta1 <- exp(par0[7]) 
+  beta2 <- exp(par0[8]) 
+  beta12 <- exp(par0[9]) 
+  sigma11 <- exp(par0[10])
+  sigma22 <- exp(par0[11])
+  sigma12 <- par0[12]*sqrt(sigma11 * sigma22)
+  # restriction <- sigma12/sqrt(sigma11 * sigma22) * gamma(nu1/2 + nu2/2 + d/2)/sqrt(gamma(nu1 + d/2)*gamma(nu2 + d/2)) * 
+  #   sqrt(gamma(nu1) * gamma(nu2))/gamma(nu1/2 + nu2/2) * 
+  #   sqrt(gamma(alpha1) * gamma(alpha2))/gamma(alpha1/2 + alpha2/2) *
+  #   ((beta1^2 + beta2^2)/2)^(alpha1/2 + alpha2/2) / (beta1^(alpha1) * beta2^(alpha2))
+  # if (abs(restriction) >= (1 - .0001)) {
+  #   return(10^6)
+  # }
+  cov11 <- sigma11*create_ch_covariance_matrix(dist11, nu = nu1, alpha = alpha1, beta = beta1)
+  diag(cov11) <- sigma11
+  cov12 <- sigma12*create_ch_covariance_matrix(dist12, nu = nu12, alpha = alpha12,
+                                               beta = beta12)
+  if (sum(is.nan(diag(cov12))) > 0) {
+    diag(cov12) <- sigma12
+  }
+  cov22 <- sigma22*create_ch_covariance_matrix(dist22, nu = nu2, alpha = alpha2, beta = beta2)
+  diag(cov22) <- sigma22
+  joint_matrix <- rbind(cbind(cov11, cov12), cbind(t(cov12), cov22))
+  
+  joint_matrix_eigen <- eigen(joint_matrix)
+  if (min(joint_matrix_eigen$values) <  10^-6) {
+    return(10^6)
+  }
+  jm_chol <- chol(joint_matrix)
+  ll_val <- -1/2 * sum(backsolve(jm_chol, response, transpose = T)^2) -
+    sum(log(diag(jm_chol)))
+  - ll_val
+}
+
+
 
 #' Matern likelihood with p = 2
 #'
@@ -241,7 +296,10 @@ ll_matern <- function(par0, dist11, dist12, dist22, response, d = 2) {
   cov22 <- sigma22*create_matern_covariance_matrix(dist22, nu = nu2, phi = phi)
   diag(cov22) <- sigma22
   joint_matrix <- rbind(cbind(cov11, cov12), cbind(t(cov12), cov22))
-  jm_chol <- chol(joint_matrix)
+  jm_chol <- tryCatch(expr = chol(joint_matrix), error = function(x) F)
+  if (length(jm_chol) == 1) {
+    return(10^6)
+  }
   ll_val <- -1/2 * sum(backsolve(jm_chol, response, transpose = T)^2) -
     sum(log(diag(jm_chol)))
   - ll_val
@@ -285,6 +343,107 @@ ll_gc <- function(par0, dist11, dist12,dist22, response, d = 2) {
   - ll_val
 }
 
+#' Generalized Cauchy likelihood with p = 2
+#'
+#' @param par0 model parameters
+#' @param dist11 square matrix of distances for locations observed for first process
+#' @param dist12 matrix of distances between locations observed for first and second processes
+#' @param dist22 square matrix distances for locations observed for second process
+#' @param response a vector of data of length nrow(dist11) + nrow(dist22), with values for process 1 presented first
+#' @param d dimension
+#'
+#' @return a value (up to a constant) proportional to the multivariate Gaussian log-likelihood based on the covariances
+#' @export
+#'
+#' @examples
+ll_gc_full <- function(par0, dist11, dist12,dist22, response, d = 2) {
+  phi <- exp(par0[1])
+  alpha1 <- exp(par0[2])
+  alpha2 <- exp(par0[3])
+  alpha12 <- exp(par0[4])
+  beta1 <-  exp(par0[5]) 
+  beta2 <-  exp(par0[6]) 
+  beta12 <-  exp(par0[7]) 
+  sigma11 <- exp(par0[8])
+  sigma22 <- exp(par0[9])
+  sigma12 <- par0[10]*sqrt(sigma11 * sigma22)
+  # if (abs(par0[10]) >= (1 - .0001)) {
+  #   return(10^6)
+  # }
+  print(par0)
+  cov11 <- sigma11*create_gc_covariance_matrix(dist11, alpha = alpha1, beta = beta1, phi = phi)
+  diag(cov11) <- sigma11
+  cov12 <- sigma12*create_gc_covariance_matrix(dist12, alpha = alpha12, beta = beta12, phi = phi)
+  if (sum(is.nan(diag(cov12))) > 0) {
+    diag(cov12) <- sigma12
+  }
+  cov22 <- sigma22*create_gc_covariance_matrix(dist22, alpha = alpha2, beta = beta2, phi = phi)
+  diag(cov22) <- sigma22
+  joint_matrix <- rbind(cbind(cov11, cov12), cbind(t(cov12), cov22))
+  values <- eigen(joint_matrix)$values
+  if (min(values) < 10^-6) {
+    return(10^6)
+  }
+  jm_chol <- chol(joint_matrix)
+  ll_val <- -1/2 * sum(backsolve(jm_chol, response, transpose = T)^2) -
+    sum(log(diag(jm_chol)))
+  - ll_val
+}
+
+#' Matern likelihood with p = 2
+#'
+#' @param par0 model parameters
+#' @param dist11 square matrix of distances for locations observed for first process
+#' @param dist12 matrix of distances between locations observed for first and second processes
+#' @param dist22 square matrix distances for locations observed for second process
+#' @param response a vector of data of length nrow(dist11) + nrow(dist22), with values for process 1 presented first
+#' @param d dimension
+#'
+#' @return a value (up to a constant) proportional to the multivariate Gaussian log-likelihood based on the covariances
+#' @export
+#'
+#' @examples
+ll_matern_full <- function(par0, dist11, dist12, dist22, response, d = 2) {
+  nu1 <- exp(par0[1])
+  nu2 <- exp(par0[2])
+  nu12 <- exp(par0[3])
+  phi1 <- exp(par0[4]) 
+  phi2 <- exp(par0[5]) 
+  phi12 <- exp(par0[6]) 
+  sigma11 <- exp(par0[7])
+  sigma22 <- exp(par0[8])
+  sigma12 <- par0[9]*sqrt(sigma11 * sigma22)
+  # restriction <- sigma12/sqrt(sigma11 * sigma22) * gamma(nu1/2 + nu2/2 + d/2)/sqrt(gamma(nu1 + d/2)*gamma(nu2 + d/2)) * 
+  #   sqrt(gamma(nu1) * gamma(nu2))/gamma(nu1/2 + nu2/2)
+  # if (abs(restriction) >= (1 - .0001)) {
+  #   return(10^6)
+  # }
+  cov11 <- sigma11*create_matern_covariance_matrix(dist11, nu = nu1, phi = phi1)
+  diag(cov11) <- sigma11
+  cov12 <- sigma12*create_matern_covariance_matrix(dist12, nu = nu12, phi = phi12)
+  if (sum(is.nan(diag(cov12))) > 0) {
+    diag(cov12) <- sigma12
+  }
+  cov22 <- sigma22*create_matern_covariance_matrix(dist22, nu = nu2, phi = phi2)
+  diag(cov22) <- sigma22
+  joint_matrix <- rbind(cbind(cov11, cov12), cbind(t(cov12), cov22))
+  
+  joint_matrix_eigen <- tryCatch(expr = eigen(joint_matrix), error = function(x) F)
+  if (length(joint_matrix_eigen) == 1) {
+    return(10^6)
+  }
+  if (min(joint_matrix_eigen$values) <  10^-6) {
+    return(10^6)
+  }
+  jm_chol <- tryCatch(expr = chol(joint_matrix), error = function(x) F)
+  if (length(jm_chol) == 1) {
+    return(10^6)
+  }
+  ll_val <- -1/2 * sum(backsolve(jm_chol, response, transpose = T)^2) -
+    sum(log(diag(jm_chol)))
+  - ll_val
+}
+
 #' Spectral Confluent Hypergeometric likelihood with p = 2
 #'
 #' @param par0 model parameters
@@ -312,6 +471,7 @@ ll_ch_spectral <- function(par0, dist11, dist12,dist22, n_points, dht_setup, res
     sqrt(gamma(nu1) * gamma(nu2))/gamma(nu1/2 + nu2/2) * 
     sqrt(gamma(alpha1) * gamma(alpha2))/gamma(alpha1/2 + alpha2/2) *
     ((beta1^2 + beta2^2)/2)^(alpha1/2 + alpha2/2) / (beta1^(alpha1) * beta2^(alpha2))
+  #print(exp(par0))
   if (abs(restriction) >= (1 - .01)) {
     return(10^6)
   }
@@ -327,6 +487,10 @@ ll_ch_spectral <- function(par0, dist11, dist12,dist22, n_points, dht_setup, res
                                              beta1 = beta2, beta2 = beta2, n_points = n_points, dht_setup = dht_setup)
   diag(cov22) <- sigma22
   joint_matrix <- rbind(cbind(cov11, cov12), cbind(t(cov12), cov22))
+  joint_matrix_eigen <- eigen(joint_matrix)
+  if (min(joint_matrix_eigen$values) <  10^-6) {
+    return(10^6)
+  }
   jm_chol <- chol(joint_matrix)
   ll_val <- -1/2 * sum(backsolve(jm_chol, response, transpose = T)^2) -
     sum(log(diag(jm_chol)))
@@ -353,7 +517,6 @@ ll_ch_spectral <- function(par0, dist11, dist12,dist22, n_points, dht_setup, res
 #'
 #' @examples
 ll_ch_p3 <- function(par0, dist_list, response_list, d = 2, nugget = T) {
-  print(c(exp(par0[1:12]), par0[13:15], exp(par0[16:18])))
   nu1 <- exp(par0[1])
   nu2 <- exp(par0[2])
   nu3 <- exp(par0[3])
@@ -421,7 +584,6 @@ ll_ch_p3 <- function(par0, dist_list, response_list, d = 2, nugget = T) {
     ll_vals[i] <- -1/2 * sum(backsolve(jm_chol, as.vector(response_list[[i]]), transpose = T)^2) -
       sum(log(diag(jm_chol)))
   }
-  print(sum(ll_vals))
   - sum(ll_vals)
 }
 
@@ -441,7 +603,6 @@ ll_ch_p3 <- function(par0, dist_list, response_list, d = 2, nugget = T) {
 #'
 #' @examples
 ll_matern_p3 <- function(par0, dist_list, response_list, d = 2, nugget = T) {
-  print(exp(par0))
   nu1 <- exp(par0[1])
   nu2 <- exp(par0[2])
   nu3 <- exp(par0[3])
@@ -499,7 +660,6 @@ ll_matern_p3 <- function(par0, dist_list, response_list, d = 2, nugget = T) {
     ll_vals[i] <- -1/2 * sum(backsolve(jm_chol, as.vector(response_list[[i]]), transpose = T)^2) -
       sum(log(diag(jm_chol)))
   }
-  print(sum(ll_vals))
   - sum(ll_vals)
 }
 

@@ -74,9 +74,13 @@ ggplot() +
   scale_x_continuous(breaks = c(120, 160)) + 
   scale_color_gradient2() +
   facet_wrap(~year, nrow = 2) +
-  labs(x = 'Longitude', y = 'Latitude',  color = 'Oxygen residuals (μmol/kg)') +
-  theme(legend.key.width = unit(.5, 'in'))
-ggsave(height = 6, width = 8.8, filename = 'images/oxy_resids.png')
+  labs(x = 'Longitude', y = 'Latitude',  color = 'Oxygen\nresiduals\n(μmol/kg)') +
+  #labs(x = 'Longitude', y = 'Latitude',  color = 'Oxygen residuals (μmol/kg)') +
+  #theme(legend.key.width = unit(.5, 'in'))
+  guides(color = guide_colorbar(position = "inside")) +
+  theme(legend.position.inside = c(0.85, 0.18),
+        legend.justification.inside = 'center')
+ggsave(height = 4.75, width = 8.8, filename = 'images/oxy_resids.png')
 
 ggplot() +
   geom_point(data = df_subset_150_atl_resid, aes(x = longitude, y = latitude, color = oxy), size = 1.2) +
@@ -85,9 +89,13 @@ ggplot() +
   scale_x_continuous(breaks = c(120, 160)) + 
   scale_color_viridis_c() +
   facet_wrap(~year, nrow = 2) +
-  labs(x = 'Longitude', y = 'Latitude',  color = 'Oxygen (μmol/kg)') +
-  theme(legend.key.width = unit(.5, 'in'))
-ggsave(height = 6, width = 8.8, filename = 'images/oxy.png')
+  labs(x = 'Longitude', y = 'Latitude',  color = 'Oxygen\n(μmol/kg)') +
+  guides(color = guide_colorbar(position = "inside")) +
+  theme(legend.position.inside = c(0.85, 0.18),
+        legend.justification.inside = 'center')
+  # labs(x = 'Longitude', y = 'Latitude',  color = 'Oxygen (μmol/kg)') +
+  # theme(legend.key.width = unit(.5, 'in'))
+ggsave(height = 4.75, width = 8.8, filename = 'images/oxy.png')
 
 
 ggplot() +
@@ -97,9 +105,13 @@ ggplot() +
   scale_x_continuous(breaks = c(120, 160)) + 
   scale_color_gradient2() +
   facet_wrap(~year, nrow = 2) +
-  labs(x = 'Longitude', y = 'Latitude',  color = 'Temperature residuals (°C)') +
-  theme(legend.key.width = unit(.5, 'in'))
-ggsave(height = 6, width = 8.8, filename = 'images/temp_resids.png')
+  labs(x = 'Longitude', y = 'Latitude',  color = 'Temp\nresiduals\n(°C)') +
+  guides(color = guide_colorbar(position = "inside")) +
+  theme(legend.position.inside = c(0.85, 0.18),
+        legend.justification.inside = 'center')
+  # labs(x = 'Longitude', y = 'Latitude',  color = 'Temperature residuals (°C)') +
+  # theme(legend.key.width = unit(.5, 'in'))
+ggsave(height = 4.75, width = 8.8, filename = 'images/temp_resids.png')
 
 ggplot() +
   geom_point(data = df_subset_150_atl_resid, aes(x = longitude, y = latitude, color = temp), size = 1.2) +
@@ -108,9 +120,11 @@ ggplot() +
   scale_x_continuous(breaks = c(120, 160)) + 
   scale_color_viridis_c() +
   facet_wrap(~year, nrow = 2) +
-  labs(x = 'Longitude', y = 'Latitude',  color = 'Temperature (°C)') +
-  theme(legend.key.width = unit(.5, 'in'))
-ggsave(height = 6, width = 8.8, filename = 'images/temp.png')
+  labs(x = 'Longitude', y = 'Latitude',  color = 'Temp\n(°C)') +
+  guides(color = guide_colorbar(position = "inside")) +
+  theme(legend.position.inside = c(0.85, 0.18),
+        legend.justification.inside = 'center')
+ggsave(height = 4.75, width = 8.8, filename = 'images/temp.png')
 
 
 ggplot() +
@@ -120,9 +134,12 @@ ggplot() +
   scale_x_continuous(breaks = c(120, 160)) + 
   scale_color_gradient2() +
   facet_wrap(~year, nrow = 2) +
-  labs(x = 'Longitude', y = 'Latitude',  color = 'Salinity residuals (PSU)') +
-  theme(legend.key.width = unit(.5, 'in'))
-ggsave(height = 6, width = 8.8, filename = 'images/psal_resids.png')
+  labs(x = 'Longitude', y = 'Latitude',  color = 'Salinity\nresiduals\n(PSU)') +
+  guides(color = guide_colorbar(position = "inside")) +
+  theme(legend.position.inside = c(0.85, 0.18),
+        legend.justification.inside = 'center')#+ 
+  #theme(legend.key.width = unit(.3, 'in'), legend.position = 'right')
+ggsave(height = 4.75, width = 8.8, filename = 'images/psal_resids.png')
 
 ggplot() +
   geom_point(data = df_subset_150_atl_resid, aes(x = longitude, y = latitude, color = temp), size = 1.2) +
@@ -131,9 +148,11 @@ ggplot() +
   scale_x_continuous(breaks = c(120, 160)) + 
   scale_color_viridis_c() +
   facet_wrap(~year, nrow = 2) +
-  labs(x = 'Longitude', y = 'Latitude',  color = 'Salinity (PSU)') +
-  theme(legend.key.width = unit(.5, 'in'))
-ggsave(height = 6, width = 8.8, filename = 'images/psal.png')
+  labs(x = 'Longitude', y = 'Latitude',  color = 'Salinity\n(PSU)') +
+  guides(color = guide_colorbar(position = "inside")) +
+  theme(legend.position.inside = c(0.85, 0.18),
+        legend.justification.inside = 'center')
+ggsave(height = 4.75, width = 8.8, filename = 'images/psal.png')
 
 # save residuals
 save(df_subset_150_atl_resid, file = 'data_results/soccom_resids.RData')

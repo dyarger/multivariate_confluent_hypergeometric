@@ -21,7 +21,7 @@ color_scale <- scale_fill_gradientn(colors = rev(rainbow(10)))
 color_scale2 <- scale_fill_gradientn(colors = rev(rainbow(10)))
 
 # compare with confluent hypergeometric
-df <- fft_2d(grid_info, nu1 = .5, nu2 = .5, alpha1 = 2, alpha2 = 2, beta1 = 1, beta2 = 1, Psi = Psi, d = 2, Delta = Delta)
+df <- fft_2d(grid_info, nu1 = .5, nu2 = .5, alpha1 = 2, alpha2 = 2, beta1 = 1, beta2 = 1, d = 2, Delta = Delta)
 min_val <-  df$Var2[which.min(abs(df$Var2))]
 plot(df$Var1[df$Var2 == min_val & abs(df$Var1) < 5], df$val[df$Var2 == min_val & abs(df$Var1) < 5], type = 'l')
 true_cov_val <- rep(0, length(df$Var1[df$Var2 == min_val & abs(df$Var1) < 5]))
