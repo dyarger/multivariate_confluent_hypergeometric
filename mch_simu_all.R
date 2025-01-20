@@ -792,6 +792,7 @@ preds_df <- dplyr::bind_rows(preds) %>%
                                               'CH_full', 'Matern_full', 'GC_full')))
 theme_set(theme_bw())
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   filter(predictor_variables %in% c('None', 'Y1', 'Y2', 'Both')) %>%
@@ -806,7 +807,7 @@ preds_df  %>%
                                           'True~covariance:GC')),
                             levels = c('True~covariance:CH', 'True~covariance:Matern', 
                                        'True~covariance:GC')),
-         est_cov = factor(est_cov, levels = c('None', 'CH', 'Matern', 'GC'))) %>%
+         est_cov = factor(est_cov, levels = c('Prediction of 0', 'CH', 'Matern', 'GC'))) %>%
   rename(`Response variable` = response_variable) %>%
   dplyr::filter(est_cov != 'Matern_full',  est_cov != 'CH_full', est_cov != 'GC_full', 
                 est_cov != 'CH_spectral', 
@@ -822,6 +823,7 @@ preds_df  %>%
   guides(color = guide_legend(nrow = 2))
 ggsave(height = 4.7  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_dense.png'))
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   filter(predictor_variables %in% c('None', 'Y1', 'Y2', 'Both')) %>%
@@ -837,7 +839,7 @@ preds_df  %>%
                                           'True~covariance:GC')),
                                    levels = c('True~covariance:CH', 'True~covariance:Matern', 
                                               'True~covariance:GC')),
-         est_cov = factor(est_cov, levels = c('None', 'CH', 'Matern', 'GC'))) %>%
+         est_cov = factor(est_cov, levels = c('Prediction of 0', 'CH', 'Matern', 'GC'))) %>%
   rename(`Response variable` = response_variable) %>%
   dplyr::filter(est_cov != 'Matern_full',  est_cov != 'CH_full', est_cov != 'GC_full', 
                 est_cov != 'CH_spectral', 
@@ -855,6 +857,7 @@ preds_df  %>%
 ggsave(height = 4.7 * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_sparse.png'))
 
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   filter(predictor_variables %in% c('None', 'Y1', 'Y2', 'Both')) %>%
@@ -869,7 +872,7 @@ preds_df  %>%
                                           'True~covariance:GC')),
                             levels = c('True~covariance:CH', 'True~covariance:Matern', 
                                        'True~covariance:GC')),
-         est_cov = factor(est_cov, levels = c('None', 'CH', 'Matern', 'GC'))) %>%
+         est_cov = factor(est_cov, levels = c('Prediction of 0', 'CH', 'Matern', 'GC'))) %>%
   rename(`Response variable` = response_variable) %>%
   dplyr::filter(est_cov != 'Matern_full',  est_cov != 'CH_full', est_cov != 'GC_full', 
                 est_cov != 'CH_spectral', 
@@ -885,6 +888,7 @@ preds_df  %>%
   guides(color = guide_legend(nrow = 2))
 ggsave(height = 4.7  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_dense_colocated.png'))
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   filter(predictor_variables %in% c('None', 'Y1', 'Y2', 'Both')) %>%
@@ -900,7 +904,7 @@ preds_df  %>%
                                           'True~covariance:GC')),
                             levels = c('True~covariance:CH', 'True~covariance:Matern', 
                                        'True~covariance:GC')),
-         est_cov = factor(est_cov, levels = c('None', 'CH', 'Matern', 'GC'))) %>%
+         est_cov = factor(est_cov, levels = c('Prediction of 0', 'CH', 'Matern', 'GC'))) %>%
   rename(`Response variable` = response_variable) %>%
   dplyr::filter(est_cov != 'Matern_full',  est_cov != 'CH_full', est_cov != 'GC_full', 
                 est_cov != 'CH_spectral', 
@@ -920,6 +924,7 @@ ggsave(height = 4.7 * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_
 
 
 summary_df <- preds_df  %>%
+  #mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   mutate(            upper = pred_Yout + qnorm(.975) * ifelse(is.na(sqrt(var_Yout)), 0, 
                                                               sqrt(var_Yout)), 
                      lower = pred_Yout - qnorm(.975) * ifelse(is.na(sqrt(var_Yout)), 0, 
@@ -1070,6 +1075,7 @@ preds_df  %>%
 
 
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables,  est_cov, simu, setting, colocated, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   mutate(predictor_variables = factor(predictor_variables, levels =  c('None', 'Y1', 'Y1 + Y1out', 'Y1 + Y2out', 'Y2', 'Y2 + Y1out', 'Y2 + Y2out',
@@ -1087,7 +1093,7 @@ preds_df  %>%
   geom_boxplot(mapping = aes(x = predictor_variables, group =  factor(paste(est_cov, predictor_variables)), 
                              color = est_cov, y = rmse), size = .3, outlier.size = .4) +
   labs(x = 'Predictor variables', y = 'Prediction root-mean-\nsquared-error', color = 'Covariance estimated') +
-  scale_x_discrete(labels = c('None', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
+  scale_x_discrete(labels = c('Prediction of 0', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[1]*'(s'[1]*'), Y'[2]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*')'),expression('Y'[2]*'(s'[2]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*'), Y'[2]*'(s'[out]*')'),
@@ -1100,6 +1106,7 @@ preds_df  %>%
 ggsave(height = 4.7 * 1.2, width = 6.5  * 1.2, filename = paste0('images/sim_pred_dense_predvars.png'))
 
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables,  est_cov, simu, setting, colocated, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   mutate(predictor_variables = factor(predictor_variables, levels =  c('None', 'Y1', 'Y1 + Y1out', 'Y1 + Y2out', 'Y2', 'Y2 + Y1out', 'Y2 + Y2out',
@@ -1117,7 +1124,7 @@ preds_df  %>%
   geom_boxplot(mapping = aes(x = predictor_variables, group =  factor(paste(est_cov, predictor_variables)), 
                              color = est_cov, y = rmse), size = .3, outlier.size = .4) +
   labs(x = 'Predictor variables', y = 'Prediction root-mean-\nsquared-error', color = 'Covariance estimated') +
-  scale_x_discrete(labels = c('None', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
+  scale_x_discrete(labels = c('Prediction of 0', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[1]*'(s'[1]*'), Y'[2]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*')'),expression('Y'[2]*'(s'[2]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*'), Y'[2]*'(s'[out]*')'),
@@ -1132,6 +1139,7 @@ ggsave(height = 4.7 * 1.2, width = 6.5  * 1.2, filename = paste0('images/sim_pre
 
 
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables,  est_cov, simu, setting, colocated, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   mutate(predictor_variables = factor(predictor_variables, levels =  c('None', 'Y1', 'Y1 + Y1out', 'Y1 + Y2out', 'Y2', 'Y2 + Y1out', 'Y2 + Y2out',
@@ -1149,7 +1157,7 @@ preds_df  %>%
   geom_boxplot(mapping = aes(x = predictor_variables, group =  factor(paste(est_cov, predictor_variables)), 
                              color = est_cov, y = rmse), size = .3, outlier.size = .4) +
   labs(x = 'Predictor variables', y = 'Prediction root-mean-\nsquared-error', color = 'Covariance estimated') +
-  scale_x_discrete(labels = c('None', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
+  scale_x_discrete(labels = c('Prediction of 0', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[1]*'(s'[1]*'), Y'[2]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*')'),expression('Y'[2]*'(s'[2]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*'), Y'[2]*'(s'[out]*')'),
@@ -1162,6 +1170,7 @@ preds_df  %>%
 ggsave(height = 4.7 * 1.2, width = 6.5  * 1.2, filename = paste0('images/sim_pred_dense_predvars_colocated.png'))
 
 preds_df  %>%
+  mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables,  est_cov, simu, setting, colocated, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
   mutate(predictor_variables = factor(predictor_variables, levels =  c('None', 'Y1', 'Y1 + Y1out', 'Y1 + Y2out', 'Y2', 'Y2 + Y1out', 'Y2 + Y2out',
@@ -1179,7 +1188,7 @@ preds_df  %>%
   geom_boxplot(mapping = aes(x = predictor_variables, group =  factor(paste(est_cov, predictor_variables)), 
                              color = est_cov, y = rmse), size = .3, outlier.size = .4) +
   labs(x = 'Predictor variables', y = 'Prediction root-mean-\nsquared-error', color = 'Covariance estimated') +
-  scale_x_discrete(labels = c('None', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
+  scale_x_discrete(labels = c('Prediction of 0', expression('Y'[1]*'(s'[1]*')'), expression('Y'[1]*'(s'[1]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[1]*'(s'[1]*'), Y'[2]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*')'),expression('Y'[2]*'(s'[2]*'), Y'[1]*'(s'[out]*')'),
                               expression('Y'[2]*'(s'[2]*'), Y'[2]*'(s'[out]*')'),
