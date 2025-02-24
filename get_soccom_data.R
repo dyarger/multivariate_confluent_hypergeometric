@@ -1,5 +1,5 @@
 library(ncdf4)
-file_folder <- '../Desktop/bb9362707g_9_1/SOCCOM_GO-BGC_LoResQC_LIAR_28Aug2023_netcdf/'
+file_folder <- '~/Downloads/SOCCOM_GO-BGC_LoResQC_LIAR_28Aug2023_netcdf/'
 files <- list.files(file_folder, pattern = '.nc')
 data_list <- list()
 for (j in 1:length(files)) {
@@ -88,8 +88,8 @@ soccom <- dplyr::bind_rows(data_list)
 df_TS <- soccom %>%
   filter(psal > 28, latitude < -25, pressure < 2000, pressure > 0,
          oxy != 8) %>%
-  filter(psal_QC == 0 |  temp_QC == 0 |  pressure_QC == 0 | 
-           !is.na(pressure) | !is.na(longitude)) %>%
+  filter(psal_QC == 0,  temp_QC == 0, pressure_QC == 0, 
+           !is.na(pressure), !is.na(longitude)) %>%
   mutate(profile_unique = paste0(float, '_', profile)) %>%
   group_by(profile_unique) %>%
   arrange(pressure) %>%
@@ -131,8 +131,6 @@ df_list <- list(dplyr::select(df, -ends_with('_QC'),  # BGC info
                   mutate(longitude = ifelse(longitude > 180, longitude - 360, longitude)), 
                 dplyr::select(df_TS, -ends_with('_QC'), -pdens) %>% # info with all T/S measurements
                   mutate(longitude = ifelse(longitude > 180, longitude - 360, longitude))) 
-
-
 save(df_list, file = paste0('data_results/soccom_new.RData'))
 df <- df_list[[2]]
 df_subset <- df %>%

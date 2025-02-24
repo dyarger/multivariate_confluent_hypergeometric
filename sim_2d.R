@@ -6,7 +6,7 @@ library(ggplot2)
 library(tidyverse)
 theme_set(theme_bw() + theme(text = element_text(size = 16), legend.position = 'bottom'))
 n_samples <- 2000
-dim_grid <- 501
+dim_grid <- 701
 x <- seq(0, 25, length.out = dim_grid)
 grid <- matrix(ncol = 2, unlist(expand.grid(x, x)))
 
@@ -74,13 +74,14 @@ ggplot(data = cbind(as.data.frame(grid), sim1 = sim_f[,1], sim2 = sim_f[,2]) %>%
   geom_raster() +
   coord_equal() +
   scale_fill_gradientn(colors = rev(rainbow(10))) + 
-  labs(fill = 'Simulated\nvalue') +
+  labs(fill = 'Simulated value') +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank(),
+        axis.title = element_blank(),
         legend.key.height = unit(.8, "cm"),
         legend.key.width = unit(.8, "cm")
   )
-ggsave(filename = 'images/simu_MCH.png', height = 5.1, width = 8, dpi = 150)
+ggsave(filename = 'images/simu_MCH.png', height = 5.1/1.25, width = 7.5/1.25, dpi = 225)
 
 h_fun2 <- function(h, alpha1, alpha2, nu1, nu2, beta, d = 2) {
   -0.8 * gamma(nu1/2 + nu2/2 + d/2) * beta^d  / (2*pi)^(d/2) / beta(nu1/2 + nu2/2, alpha1/2 + alpha2/2) * 
@@ -102,13 +103,14 @@ ggplot(data = cbind(as.data.frame(grid), sim1 = sim_f[,1], sim2 = sim_f[,2]) %>%
   geom_raster() +
   coord_equal() +
   scale_fill_gradientn(colors = rev(rainbow(10))) + 
-  labs(fill = 'Simulated\nvalue') +
+  labs(fill = 'Simulated value') +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank(),
+        axis.title = element_blank(),
         legend.key.height = unit(.8, "cm"),
         legend.key.width = unit(.8, "cm")
   )
-ggsave(filename = 'images/simu_MCH_negative.png', height = 5.1, width = 8, dpi = 150)
+ggsave(filename = 'images/simu_MCH_negative.png',  height = 5.1/1.25, width = 7.5/1.25, dpi = 225)
 
 
 # do same thing for matern
@@ -170,13 +172,14 @@ ggplot(data = cbind(as.data.frame(grid), sim1 = sim_f[,1], sim2 = sim_f[,2]) %>%
   geom_raster() +
   coord_equal() +
   scale_fill_gradientn(colors = rev(rainbow(10))) + 
-  labs(fill = 'Simulated\nvalue') +
+  labs(fill = 'Simulated value') +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank(),
+        axis.title = element_blank(),
         legend.key.height = unit(.8, "cm"),
         legend.key.width = unit(.8, "cm")
   )
-ggsave(filename = 'images/simu_matern.png', height = 5.1, width = 8, dpi = 150)
+ggsave(filename = 'images/simu_matern.png',  height = 5.1/1.25, width = 7.5/1.25, dpi = 225)
 
 
 h_fun2 <- function(h, a1, a2, nu1, nu2, d = 2) {
@@ -198,10 +201,11 @@ ggplot(data = cbind(as.data.frame(grid), sim1 = sim_f[,1], sim2 = sim_f[,2]) %>%
   geom_raster() +
   coord_equal() +
   scale_fill_gradientn(colors = rev(rainbow(10))) + 
-  labs(fill = 'Simulated\nvalue') +
+  labs(fill = 'Simulated value') +
   theme(strip.background = element_blank(),
         strip.text.x = element_blank(),
+        axis.title = element_blank(),
         legend.key.height = unit(.8, "cm"),
         legend.key.width = unit(.8, "cm")
   )
-ggsave(filename = 'images/simu_matern_negative.png', height = 5.1, width = 8, dpi = 150)
+ggsave(filename = 'images/simu_matern_negative.png',  height = 5.1/1.25, width = 7.5/1.25, dpi = 225)

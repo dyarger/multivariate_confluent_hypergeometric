@@ -104,9 +104,9 @@ ggplot(data = data.frame(a2 = a2_seq, nu2 = rep(nu2_seq, each = length(a2_seq)),
   coord_equal() +
   scale_fill_viridis_c() + 
   labs(x = expression(alpha[2]), y = expression(nu[2]),
-       fill = 'Maximal\nCorrelation') +
-  theme_bw()
-ggsave(filename = 'images/max_correlation.png', height = 2.7, width = 8)
+       fill = 'Maximal Correlation') +
+  theme_bw() + theme(legend.position = 'bottom')
+ggsave(filename = 'images/max_correlation.png', height = 3.75, width = 6.5)
 
 ggplot(data = data.frame(a2 = a2_seq, nu2 = rep(nu2_seq, each = length(a2_seq)),
                          prop3.3 = as.vector(actual)/as.vector(prop3.3_seq),
@@ -154,10 +154,10 @@ df <- data.frame(h_vals, value = c(ch_vals_U, ch_vals_U1, ch_vals_U2, ch_vals_U3
 theme_set(theme_bw() + theme(text = element_text(size = 18)))
 
 ggplot(data = df, aes(x = h_vals, y = value, group = type, linetype = type, color = type)) +
-  geom_line() +
+  geom_line(size = .95) +
   labs(x = 'Frequency', y = 'Spectral density value', color = expression(alpha),
        linetype = expression(alpha))
-ggsave('images/spec_dens_alpha.png', height = 3, width = 6)
+ggsave('images/spec_dens_alpha.png', height = 3, width = 5)
 
 
 ch_vals_U <- sapply(h_vals, ch_spec_dens, nu = .5, alpha = 1, beta = 1, d = 1)
@@ -174,11 +174,11 @@ df <- data.frame(h_vals, value = c(ch_vals_U, ch_vals_U1, ch_vals_U2, ch_vals_U3
 
 ggplot(data = df, aes(x = h_vals, y = value, group = type, 
                       linetype = type, color = type)) +
-  geom_line() + 
+  geom_line(size = .95) + 
   scale_y_log10() +
   labs(x = 'Frequency', y = 'Spectral density value', color = expression(nu),
        linetype = expression(nu))
-ggsave('images/spec_dens_nu.png', height = 3, width = 6)
+ggsave('images/spec_dens_nu.png', height = 3, width = 5)
 
 
 ch_vals_U <- sapply(h_vals, ch_spec_dens, nu = .5, alpha = 1, beta = 1, d = 1)
@@ -195,11 +195,11 @@ df <- data.frame(h_vals, value = c(ch_vals_U, ch_vals_U1, ch_vals_U2, ch_vals_U3
 
 ggplot(data = df, aes(x = h_vals, y = value, group = type, 
                       linetype = type, color = type)) +
-  geom_line() + 
+  geom_line(size = .95) + 
   scale_y_log10() +
   labs(x = 'Frequency', y = 'Spectral density value', color = expression(beta),
        linetype = expression(beta))
-ggsave('images/spec_dens_beta.png', height = 3, width = 6)
+ggsave('images/spec_dens_beta.png', height = 3, width = 5)
 
 
 

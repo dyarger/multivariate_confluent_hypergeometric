@@ -791,7 +791,7 @@ preds_df <- dplyr::bind_rows(preds) %>%
   mutate(est_cov = factor(est_cov, levels = c('None', 'CH', 'Matern', 'GC', 'CH_spectral',
                                               'CH_full', 'Matern_full', 'GC_full')))
 theme_set(theme_bw())
-preds_df  %>%
+df_use_plot <- preds_df  %>%
   mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
   summarize(rmse = sqrt(mean((Yout - pred_Yout)^2))) %>%
@@ -812,16 +812,16 @@ preds_df  %>%
   dplyr::filter(est_cov != 'Matern_full',  est_cov != 'CH_full', est_cov != 'GC_full', 
                 est_cov != 'CH_spectral', 
                 colocated == F, setting == 'dense', 
-                keep == T) %>%
-  ggplot(data = .) +
+                keep == T)
+ggplot(data = df_use_plot) +
   geom_boxplot(mapping = aes(x = est_cov, 
                              group = factor(paste(est_cov, predictor_variables)),
-                             y = rmse)) +
+                             y = rmse), linewidth = .35, outlier.size = .7) +
   labs(x = 'Estimated model', y = 'Prediction root-mean-squared-error', color = 'Covariance\nestimated') +
   facet_grid(`Response variable`~true_cov, labeller = label_parsed) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   guides(color = guide_legend(nrow = 2))
-ggsave(height = 4.7  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_dense.png'))
+ggsave(height = 5.5  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_dense.png'))
 preds_df  %>%
   mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
@@ -849,12 +849,12 @@ preds_df  %>%
   #scale_y_continuous(limits = c(NA, 1.25)) + 
   geom_boxplot(mapping = aes(x = est_cov, 
                              group = factor(paste(est_cov, predictor_variables)),
-                             y = rmse)) +
+                             y = rmse), linewidth = .35, outlier.size = .7) +
   labs(x = 'Estimated model', y = 'Prediction root-mean-squared-error', color = 'Covariance\nestimated') +
   facet_grid(`Response variable`~true_cov, labeller = label_parsed) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   guides(color = guide_legend(nrow = 2))
-ggsave(height = 4.7 * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_sparse.png'))
+ggsave(height = 5.5  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_sparse.png'))
 
 preds_df  %>%
   mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
@@ -881,12 +881,12 @@ preds_df  %>%
   ggplot(data = .) +
   geom_boxplot(mapping = aes(x = est_cov, 
                              group = factor(paste(est_cov, predictor_variables)),
-                             y = rmse)) +
+                             y = rmse), linewidth = .35, outlier.size = .7) +
   labs(x = 'Estimated model', y = 'Prediction root-mean-squared-error', color = 'Covariance\nestimated') +
   facet_grid(`Response variable`~true_cov, labeller = label_parsed) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   guides(color = guide_legend(nrow = 2))
-ggsave(height = 4.7  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_dense_colocated.png'))
+ggsave(height = 5.5  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_dense_colocated.png'))
 preds_df  %>%
   mutate(est_cov = ifelse(est_cov == 'None', 'Prediction of 0', as.character(est_cov))) %>%
   group_by(response_variable, predictor_variables, est_cov, simu, colocated, setting, true_cov) %>%
@@ -914,12 +914,12 @@ preds_df  %>%
   #scale_y_continuous(limits = c(NA, 1.25)) + 
   geom_boxplot(mapping = aes(x = est_cov, 
                              group = factor(paste(est_cov, predictor_variables)),
-                             y = rmse)) +
+                             y = rmse), linewidth = .35, outlier.size = .7) +
   labs(x = 'Estimated model', y = 'Prediction root-mean-squared-error', color = 'Covariance\nestimated') +
   facet_grid(`Response variable`~true_cov, labeller = label_parsed) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
   guides(color = guide_legend(nrow = 2))
-ggsave(height = 4.7 * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_sparse_colocated.png'))
+ggsave(height = 5.5  * .8, width = 6.5  * .8, filename = paste0('images/sim_pred_sparse_colocated.png'))
 
 
 
