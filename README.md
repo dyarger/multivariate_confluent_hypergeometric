@@ -19,3 +19,6 @@ The data analysis is then implemented in argo_analysis.R and argo_analysis_cv.R.
 The second file should be run twice to reproduce results in the paper, with leave_out_type <- 2 as well as leave_out_type <- 'one'
 
 Data/results: contains selected .RData files from the simulation and data analysis of moderate to low storage size. In principle, results from the paper may be reproduced based on these files, without requiring downloading the Argo and SOCCOM data and running get_soccom_data.R and get_core_data.R. 
+
+## References:
+[1] Yarger, D. and Bhadra, A. (2025). Multivariate Confluent Hypergeometric Covariance Functions with Simultaneous Flexibility over Smoothness and Tail Decay. [Mathematical Geosciences](https://doi.org/10.1007/s11004-025-10185-6).
