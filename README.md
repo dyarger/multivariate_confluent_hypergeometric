@@ -1,7 +1,6 @@
 # Multivariate Confluent Hypergeometric covariances
 
-This repository houses code accompanying the paper "On Valid Multivariate Generalizations of the Confluent Hypergeometric Covariance Function."
-We break the files into sections below.
+This repository houses code accompanying the paper "Multivariate Confluent Hypergeometric Covariance Functions with Simultaneous Flexibility over Smoothness and Tail Decay." We break the files into sections below.
 
 Source files: mch_source.R contains files that create matrices of evaluated covariances, as well as log-likelihood functions for different multivariate covariances used in the simulation and data analysis. 
 mch.cpp provides relevant C++ functions, including evaluations of confluent hypergeometric functions and computation of the cross-covariances using the discrete Hilbert transform. 
